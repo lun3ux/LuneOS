@@ -1,16 +1,47 @@
-mov ah, 0x0e ; tty mode
-mov al, 'H'
-int 0x10
-mov al, 'e'
-int 0x10
-mov al, 'l'
-int 0x10
-int 0x10 ; 'l' is still on al, remember?
-mov al, 'o'
-int 0x10
+org 0x7C00
+bits 16
 
-jmp $ ; jump to current address = infinite loop
+%define ENDL 0x0D, 0x0A
 
-; padding and magic number
+start:
+    jmp main
+
+puts:
+    push si
+    push ax
+
+.loop:
+    lodsb              ; load next byte into AL
+    or al, al          ; check for null terminator
+    jz .done
+
+    mov ah, 0x0e
+    int 0x10
+
+    jmp .loop
+
+.done:
+    pop ax
+    pop si
+    ret
+
+main:
+    mov ax, 0
+    mov ds, ax
+    mov es, ax
+
+    mov ss, ax
+    mov sp, 0x7C00
+
+    mov si, msg_hello
+    call puts
+
+    hlt
+
+.halt:
+    jmp .halt
+
+msg_hello: db 'Stage 1 Boot Complete', ENDL, 0
+
 times 510 - ($-$$) db 0
-dw 0xaa55 
+dw 0xaa55
