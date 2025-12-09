@@ -41,7 +41,7 @@ main:
 .halt:
     jmp .halt
 
-msg_hello: db 'Stage 1 Boot Complete', ENDL, 0
+msg_hello: db 'Hello World!', ENDL, 0
 
 times 510 - ($-$$) db 0
 dw 0xaa55
