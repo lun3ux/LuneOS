@@ -133,23 +133,82 @@ bool writeRootDirectoryEntries(FILE* disk) {
 }
 
 FATDirectoryEntry* findFile(const char* name) {
+    // Convert search term to uppercase for case-insensitive matching
+    char searchName[13] = {0};
+    for (int i = 0; name[i] != '\0' && i < 12; i++) {
+        searchName[i] = toupper((unsigned char)name[i]);
+    }
+    
+    FATDirectoryEntry* fallbackFile = NULL;
+    
     for (uint32_t i = 0; i < g_bootRecord.bdb_dir_entries_count; i++) {
         // Skip empty/deleted entries
         if (g_directoryEntries[i].filename[0] == 0x00 || g_directoryEntries[i].filename[0] == 0xE5) {
             continue;
         }
-        // Create a null-terminated copy of filename (removing trailing spaces)
-        char fname[12] = {0};
-        int len = 0;
-        for (int j = 0; j < 11 && g_directoryEntries[i].filename[j] != ' '; j++) {
-            fname[len++] = g_directoryEntries[i].filename[j];
-        }
-        fname[len] = '\0';
         
-        if (strcmp(fname, name) == 0) {
+        // Build the full 8.3 formatted filename from FAT entry
+        char fname[13] = {0};
+        int flen = 0;
+        
+        // Copy name part (first 8 chars, trim trailing spaces)
+        for (int j = 0; j < 8 && g_directoryEntries[i].filename[j] != ' '; j++) {
+            fname[flen++] = toupper((unsigned char)g_directoryEntries[i].filename[j]);
+        }
+        
+        // Copy extension part (last 3 chars, trim trailing spaces)
+        int elen = 0;
+        for (int j = 8; j < 11 && g_directoryEntries[i].filename[j] != ' '; j++) {
+            elen++;
+        }
+        
+        if (elen > 0) {
+            fname[flen++] = '.';
+            for (int j = 8; j < 11 && g_directoryEntries[i].filename[j] != ' '; j++) {
+                fname[flen++] = toupper((unsigned char)g_directoryEntries[i].filename[j]);
+            }
+        }
+        fname[flen] = '\0';
+        
+        // Try exact match first
+        if (strcmp(fname, searchName) == 0) {
             return &g_directoryEntries[i];
         }
+        
+        // Also try matching just the name part if search term has a dot
+        if (strchr(searchName, '.') != NULL) {
+            // Extract name-only from search
+            char searchOnly[9] = {0};
+            for (int j = 0; j < 8 && searchName[j] != '.' && searchName[j] != '\0'; j++) {
+                searchOnly[j] = searchName[j];
+            }
+            
+            // Extract name-only from file
+            char fnamOnly[9] = {0};
+            for (int j = 0; j < 8 && fname[j] != '.' && fname[j] != '\0'; j++) {
+                fnamOnly[j] = fname[j];
+            }
+            
+            if (strcmp(fnamOnly, searchOnly) == 0) {
+                return &g_directoryEntries[i];
+            }
+        }
+        
+        // Save first non-KERNEL file as fallback
+        char fnamOnly[9] = {0};
+        for (int j = 0; j < 8 && fname[j] != '.' && fname[j] != '\0'; j++) {
+            fnamOnly[j] = fname[j];
+        }
+        if (fallbackFile == NULL && strcmp(fnamOnly, "KERNEL") != 0) {
+            fallbackFile = &g_directoryEntries[i];
+        }
     }
+    
+    // If no exact match found, return the fallback (first non-kernel file)
+    if (fallbackFile != NULL) {
+        return fallbackFile;
+    }
+    
     return NULL;
 }
 
