@@ -30,7 +30,7 @@ ebr_drive_number:           db 0                    ; 0x00 floppy, 0x80 hdd, use
                             db 0                    ; reserved
 ebr_signature:              db 29h
 ebr_volume_id:              db 12h, 34h, 56h, 78h   ; serial number, value doesn't matter
-ebr_volume_label:           db 'LUNE OS    '        ; 11 bytes, padded with spaces
+ebr_volume_label:           db 'NANOBYTE OS'        ; 11 bytes, padded with spaces
 ebr_system_id:              db 'FAT12   '           ; 8 bytes
 
 ;
@@ -39,7 +39,7 @@ ebr_system_id:              db 'FAT12   '           ; 8 bytes
 
 start:
     ; setup data segments
-    xor ax, ax           ; can't set ds/es directly
+    mov ax, 0           ; can't set ds/es directly
     mov ds, ax
     mov es, ax
     
@@ -49,7 +49,7 @@ start:
 
     ; some BIOSes might start us at 07C0:0000 instead of 0000:7C00, make sure we are in the
     ; expected location
-    push cs
+    push es
     push word .after
     retf
 
@@ -60,7 +60,7 @@ start:
     mov [ebr_drive_number], dl
 
     ; show loading message
-    mov si, msg_load
+    mov si, msg_loading
     call puts
 
     ; read drive parameters (sectors per track and head count),
@@ -112,7 +112,7 @@ start:
 
 .search_kernel:
     mov si, file_kernel_bin
-    mov cx, 11                      ; compare up to 11 characters
+    mov cx, 11                          ; compare up to 11 characters
     push di
     repe cmpsb
     pop di
@@ -124,7 +124,7 @@ start:
     jl .search_kernel
 
     ; kernel not found
-    jmp short kernel_not_found_error
+    jmp kernel_not_found_error
 
 .found_kernel:
 
@@ -138,7 +138,6 @@ start:
     mov cl, [bdb_sectors_per_fat]
     mov dl, [ebr_drive_number]
     call disk_read
-    
 
     ; read kernel and process FAT chain
     mov bx, KERNEL_LOAD_SEGMENT
@@ -155,7 +154,6 @@ start:
                                         ; start sector = reserved + fats + root directory size = 1 + 18 + 134 = 33
     mov cl, 1
     mov dl, [ebr_drive_number]
-    mov bx, buffer            
     call disk_read
 
     add bx, [bdb_bytes_per_sector]
@@ -176,7 +174,7 @@ start:
 
 .odd:
     shr ax, 4
-    jmp short .next_cluster_after
+    jmp .next_cluster_after
 
 .even:
     and ax, 0x0FFF
@@ -186,7 +184,7 @@ start:
     jae .read_finish
 
     mov [kernel_cluster], ax
-    jmp short .load_kernel_loop
+    jmp .load_kernel_loop
 
 .read_finish:
     
@@ -199,7 +197,7 @@ start:
 
     jmp KERNEL_LOAD_SEGMENT:KERNEL_LOAD_OFFSET
 
-    jmp short wait_key_and_reboot             ; should never happen
+    jmp wait_key_and_reboot             ; should never happen
 
     cli                                 ; disable interrupts, this way CPU can't get out of "halt" state
     hlt
@@ -212,7 +210,7 @@ start:
 floppy_error:
     mov si, msg_read_failed
     call puts
-    jmp short wait_key_and_reboot
+    jmp wait_key_and_reboot
 
 kernel_not_found_error:
     mov si, msg_kernel_not_found
@@ -220,7 +218,7 @@ kernel_not_found_error:
     jmp wait_key_and_reboot
 
 wait_key_and_reboot:
-    xor ah, ah
+    mov ah, 0
     int 16h                     ; wait for keypress
     jmp 0FFFFh:0                ; jump to beginning of BIOS, should reboot
 
@@ -246,7 +244,7 @@ puts:
     jz .done
 
     mov ah, 0x0E        ; call bios interrupt
-    mov bh, 0x00
+    mov bh, 0           ; set page number to 0
     int 0x10
 
     jmp .loop
@@ -271,13 +269,10 @@ puts:
 ;   - dh: head
 ;
 
-
-
 lba_to_chs:
 
     push ax
     push dx
-    push cx
 
     xor dx, dx                          ; dx = 0
     div word [bdb_sectors_per_track]    ; ax = LBA / SectorsPerTrack
@@ -290,14 +285,13 @@ lba_to_chs:
     div word [bdb_heads]                ; ax = (LBA / SectorsPerTrack) / Heads = cylinder
                                         ; dx = (LBA / SectorsPerTrack) % Heads = head
     mov dh, dl                          ; dh = head
-    mov ch, al                          ; ch = cyljmpinder (lower 8 bits)
+    mov ch, al                          ; ch = cylinder (lower 8 bits)
     shl ah, 6
     or cl, ah                           ; put upper 2 bits of cylinder in CL
 
     pop ax
     mov dl, al                          ; restore DL
-    pop cx
-    pop dx
+    pop ax
     ret
 
 
@@ -320,9 +314,7 @@ disk_read:
     push cx                             ; temporarily save CL (number of sectors to read)
     call lba_to_chs                     ; compute CHS
     pop ax                              ; AL = number of sectors to read
-
-
-
+    
     mov ah, 02h
     mov di, 3                           ; retry count
 
@@ -346,6 +338,7 @@ disk_read:
 
 .done:
     popa
+
     pop di
     pop dx
     pop cx
@@ -361,6 +354,7 @@ disk_read:
 ;
 disk_reset:
     pusha
+    mov ah, 0
     stc
     int 13h
     jc floppy_error
@@ -368,7 +362,7 @@ disk_reset:
     ret
 
 
-msg_load:               db 'Loading', ENDL, 0
+msg_loading:            db 'Loading...', ENDL, 0
 msg_read_failed:        db 'Read from disk failed!', ENDL, 0
 msg_kernel_not_found:   db 'KERNEL.BIN file not found!', ENDL, 0
 file_kernel_bin:        db 'KERNEL  BIN'
@@ -377,7 +371,8 @@ kernel_cluster:         dw 0
 KERNEL_LOAD_SEGMENT     equ 0x2000
 KERNEL_LOAD_OFFSET      equ 0
 
-buffer:
 
 times 510-($-$$) db 0
 dw 0AA55h
+
+buffer:

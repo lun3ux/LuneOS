@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+make clean
 set -e
 
 echo "=== LuneOS Build All ==="
@@ -49,3 +49,4 @@ echo "Next steps:"
 echo "  Run bootloader in QEMU: ./run.sh"
 echo "  Extract file from image: ./build/tools/fat build/main_floppy.img <filename>"
 echo ""
+./run.sh
