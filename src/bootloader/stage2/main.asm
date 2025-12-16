@@ -5,8 +5,6 @@ section _ENTRY class=CODE
 extern _cstart_
 global entry
 
-
-
 entry:
     cli
     ; setup stack
@@ -20,17 +18,6 @@ entry:
     xor dh, dh
     push dx
     call _cstart_
-    pop dx
-    ; Carriage Return
-    mov al, 0x0D
-    mov ah, 0x0E
-    int 10h
-
-    ; Line Feed
-    mov al, 0x0A
-    mov ah, 0x0E
-    int 10h
-    call checkKeyStroke
 
     cli
     hlt
