@@ -2,6 +2,8 @@ bits 16
 
 section _TEXT class=CODE
 
+section .text
+
 
 ;
 ; U4D
@@ -60,8 +62,8 @@ __U4M:
 ;
 ; void _cdecl x86_div64_32(uint64_t dividend, uint32_t divisor, uint64_t* quotientOut, uint32_t* remainderOut);
 ;
-global _x86_div64_32
-_x86_div64_32:
+global x86_div64_32
+x86_div64_32:
 
     ; make new call frame
     push bp             ; save old call frame
@@ -100,8 +102,8 @@ _x86_div64_32:
 ; int 10h ah=0Eh
 ; args: character, page
 ;
-global _x86_Video_WriteCharTeletype
-_x86_Video_WriteCharTeletype:
+global x86_Video_WriteCharTeletype
+x86_Video_WriteCharTeletype:
     
     ; make new call frame
     push bp             ; save old call frame
@@ -133,8 +135,8 @@ _x86_Video_WriteCharTeletype:
 ;
 ; bool _cdecl x86_Disk_Reset(uint8_t drive);
 ;
-global _x86_Disk_Reset
-_x86_Disk_Reset:
+global x86_Disk_Reset
+x86_Disk_Reset:
 
     ; make new call frame
     push bp             ; save old call frame
@@ -162,8 +164,8 @@ _x86_Disk_Reset:
 ;                           uint8_t count,
 ;                           void far * dataOut);
 ;
-global _x86_Disk_Read
-_x86_Disk_Read:
+global x86_Disk_Read
+x86_Disk_Read:
 
     ; make new call frame
     push bp             ; save old call frame
@@ -218,8 +220,8 @@ _x86_Disk_Read:
 ;                                     uint16_t* sectorsOut,
 ;                                     uint16_t* headsOut);
 ;
-global _x86_Disk_GetDriveParams
-_x86_Disk_GetDriveParams:
+global x86_Disk_GetDriveParams
+x86_Disk_GetDriveParams:
 
     ; make new call frame
     push bp             ; save old call frame
