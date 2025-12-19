@@ -43,6 +43,6 @@ toolchain_gcc: toolchain_binutils
 		--with-newlib					\
 
 	$(MAKE) -j8 -C $(GCC_BUILD) all-gcc all-target-libgcc
-	$(MAKE) -C $(GCC_BUILD) install install-target-libgcc
+	$(MAKE) -C $(GCC_BUILD) install-gcc install-target-libgcc
 	
 .PHONY: toolchain_binutils toolchain_gcc
