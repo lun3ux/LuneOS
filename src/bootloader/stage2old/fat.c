@@ -208,7 +208,6 @@ uint32_t FAT_NextCluster(uint32_t currentCluster)
         return (*(uint16_t )(g_Fat + fatIndex)) >> 4;
 }
 
-
 uint32_t FAT_Read(DISK* disk, FAT_File  file, uint32_t byteCount, void* dataOut)
 {
     FAT_FileData  fd = (file->Handle == ROOT_DIRECTORY_HANDLE)

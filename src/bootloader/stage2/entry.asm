@@ -5,9 +5,9 @@ section .entry
 extern __bss_start
 extern __end
 ; extern _cstart_
-global entry
+global _start
 
-entry:
+_start:
     cli
 
 

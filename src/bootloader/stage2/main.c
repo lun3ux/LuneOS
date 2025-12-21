@@ -1,12 +1,12 @@
 #include "stdint.h"
-// #include "stdio.h"
+#include "stdio.h"
 // #include "disk.h"
 // #include "fat.h"
 // #include "bioshelpers.h"
 
 // void  g_data = (void )0x00500200;
 
-void __attribute((_cdecl)) cstart_(uint16_t bootDrive)
+void __attribute__((cdecl)) cstart_(uint16_t bootDrive)
 {
     // DISK disk;
     // if (!DISK_Initialize(&disk, bootDrive))
