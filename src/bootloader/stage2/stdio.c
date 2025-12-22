@@ -1,22 +1,21 @@
 #include "stdio.h"
 #include <stdarg.h>
 #include <stdbool.h>
-
-uint8_t* g_ScreenBuffer = (uint8_t*)0x88000;
+#define SCREEN_SEGMENT 0xB8000
+uint8_t* g_ScreenBuffer = (uint8_t*)0xB8000;
 int g_ScreenX = 0, g_ScreenY = 0;
 const unsigned SCREEN_WIDTH = 80;
 const unsigned SCREEN_HEIGHT =25;
 
 void putchr(int x, int y, char c)
 {
-    g_ScreenBuffer[2 *(y*SCREEN_WIDTH + x)];
-
+    g_ScreenBuffer[2*(y*SCREEN_WIDTH + x)] = c;       // character
+    g_ScreenBuffer[2*(y*SCREEN_WIDTH + x)+1] = 0x07;  // color
 }
 
 void putColor(int x, int y, uint8_t color) {
-        g_ScreenBuffer[2 *(y*SCREEN_WIDTH + x+1)];
+    g_ScreenBuffer[2 *(y*SCREEN_WIDTH + x) + 1] = color; // just write color attribute
 }
-
 
 void putc(char c) {
 

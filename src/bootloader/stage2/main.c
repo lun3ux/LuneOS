@@ -1,9 +1,8 @@
-#include "stdint.h"
-#include "stdio.h"
+#include <stdint.h>
 // #include "disk.h"
 // #include "fat.h"
-
-void*  g_data = (void*)0x00500200;
+// #include "bioshelpers.h"
+#include "stdio.h"
 
 void __attribute__((cdecl)) start(uint16_t bootDrive)
 {
