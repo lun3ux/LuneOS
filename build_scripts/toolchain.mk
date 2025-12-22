@@ -2,7 +2,8 @@ toolchain: toolchain_binutils toolchain_gcc
 
 TOOLCHAIN_PREFIX=$(abspath toolchain/$(TARGET))
 BINUTILS_BUILD = toolchain/binutils-built-$(BINUTILS_VERSION)
-BINUTILS_SRC = toolchain/binutils/$(BINUTILS_VERSION)
+BINUTILS_SRC = toolchain/binutils-$(BINUTILS_VERSION)
+
 
 export PATH :=$(TOOLCHAIN_PREFIX)/bin:$(PATH)
 
@@ -20,9 +21,9 @@ toolchain_binutils:
 	$(MAKE) -j8 -C $(BINUTILS_BUILD)
 	$(MAKE) -C $(BINUTILS_BUILD) install
 
-	$(BINUTILS_SRC).tar.xz:
-		mkdir -p toolchain
-		cd toolchain && wget $(BINUTILS_URL)
+$(BINUTILS_SRC).tar.gz:
+	mkdir -p toolchain
+	cd toolchain && wget $(BINUTILS_URL)
 
 GCC_SRC = toolchain/gcc-$(GCC_VERSION)
 GCC_BUILD = toolchain/gcc-build-$(GCC_VERSION)
@@ -42,7 +43,7 @@ toolchain_gcc: toolchain_binutils
 	$(MAKE) -j8 -C $(GCC_BUILD) all-gcc all-target-libgcc
 	$(MAKE) -C $(GCC_BUILD) install-gcc install-target-libgcc
 
-$(GCC_SRC).tar.xz:
+$(GCC_SRC).tar.gz:
 	mkdir -p toolchain
 	cd toolchain && wget $(GCC_URL)
 

@@ -23,9 +23,9 @@ export BUILD_DIR=$(abspath build)
 export SRC_DIR=$(abspath src)
 
 
-BINUTILS_VERSION=2.7
+BINUTILS_VERSION=2.45
 GCC_VERSION=13.2.0
-BINUTILS_URL="https://ftp.gnu.org/gnu/binutils/binutils-$(BUNUTILS_VERSION).tar.gz"
-GCC_URL="https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VERSION).tar.gz"
-BINUTILS_BUILD = toolchain/binutils-build-$(BUNUTILS_VERSION)
+BINUTILS_URL="https://ftp.gnu.org/gnu/binutils/binutils-$(BINUTILS_VERSION).tar.gz"
+GCC_URL = https://ftp.gnu.org/gnu/gcc/gcc-$(GCC_VERSION)/gcc-$(GCC_VERSION).tar.gz
+BINUTILS_BUILD = toolchain/binutils-built-$(BINUTILS_VERSION)
 GCC_BUILD = toolchain/gcc-build-$(GCC_VERSION)
