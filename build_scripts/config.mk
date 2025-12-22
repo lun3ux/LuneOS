@@ -11,7 +11,7 @@ export TARGET = i686-elf
 export TARGET_CFLAGS = -std=c99 -g
 export TARGET_CC = $(TARGET)-gcc
 export TARGET_CCX = $(TARGET)-g++
-export TARGET_LD = $(TARGET)-ld
+export TARGET_LD = $(TARGET)-gcc
 export TARGET_ASM = nasm
 export TARGET_NASMFLAGS = 
 export TARGET_LINKFLAGS = 

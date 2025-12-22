@@ -6,7 +6,7 @@ SOURCES_ASM=$(wildcard *.asm)
 BUILD_DIR ?= $(abspath ../../../build)
 OBJECTS_ASM=$(patsubst %.asm, $(BUILD_DIR)/stage2/asm/%.obj, $(SOURCES_ASM))
 OBJECTS_C=$(patsubst %.c, $(BUILD_DIR)/stage2/c/%.obj, $(SOURCES_C))
-
+TARGET_LINKFLAGS += -T linker.ld -nostdlib
 
 .PHONY: all stage2 clean always
 
@@ -16,7 +16,7 @@ stage2: $(BUILD_DIR)/stage2.bin
 
 
 $(BUILD_DIR)/stage2.bin: $(OBJECTS_ASM) $(OBJECTS_C)
-	$(TARGET_LD) $(TARGET_LINKFlAGS) -Map=$(BUILD_DIR)/stage2.map -o $@ $^ -T linker.ld
+	$(TARGET_LD) $(TARGET_LINKFLAGS) -Wl,-Map,$(BUILD_DIR)/stage2.map -o $@ $^ $(TARGET_LIBS)
 
 $(BUILD_DIR)/stage2/c/%.obj: %.c always
 	$(TARGET_CC) $(TARGET_CFLAGS) -c -o $@ $<

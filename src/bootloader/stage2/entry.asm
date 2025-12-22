@@ -1,16 +1,13 @@
 bits 16
-
 section .entry
 
 extern __bss_start
 extern __end
-; extern _cstart_
+extern start
 global _start
 
 _start:
     cli
-
-
     ; save boot drive
     mov [g_BootDrive], dl
 
@@ -72,7 +69,7 @@ _start:
     mov dl,[g_BootDrive]
     push edx
 
-;    call _cstart_
+   call start
     
     cli
     hlt
