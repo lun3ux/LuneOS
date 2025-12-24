@@ -251,27 +251,20 @@ void printf(const char* fmt, ...)
 
                 if (number)
                 {
-
                     if (sign)
                     {
-
                         switch (length)
                         {
                         case PRINTF_LENGTH_SHORT_SHORT:
-
                         case PRINTF_LENGTH_SHORT:
+                        case PRINTF_LENGTH_DEFAULT:     printf_signed(va_arg(args, int), radix);
+                                                        break;
 
-                        case PRINTF_LENGTH_DEFAULT:     
-                            printf_signed(va_arg(args, int), radix);
-                            break;
+                        case PRINTF_LENGTH_LONG:        printf_signed(va_arg(args, long), radix);
+                                                        break;
 
-                        case PRINTF_LENGTH_LONG:        
-                            printf_signed(va_arg(args, long), radix);
-                            break;
-
-                        case PRINTF_LENGTH_LONG_LONG:   
-                            printf_signed(va_arg(args, long long), radix);
-                            break;
+                        case PRINTF_LENGTH_LONG_LONG:   printf_signed(va_arg(args, long long), radix);
+                                                        break;
                         }
                     }
                     else
@@ -280,17 +273,14 @@ void printf(const char* fmt, ...)
                         {
                         case PRINTF_LENGTH_SHORT_SHORT:
                         case PRINTF_LENGTH_SHORT:
-                        case PRINTF_LENGTH_DEFAULT:     
-                            printf_unsigned(va_arg(args, unsigned int), radix);
-                        break;
+                        case PRINTF_LENGTH_DEFAULT:     printf_unsigned(va_arg(args, unsigned int), radix);
+                                                        break;
                                                         
-                        case PRINTF_LENGTH_LONG:        
-                            printf_unsigned(va_arg(args, unsigned  long), radix);
-                            break;
+                        case PRINTF_LENGTH_LONG:        printf_unsigned(va_arg(args, unsigned  long), radix);
+                                                        break;
 
-                        case PRINTF_LENGTH_LONG_LONG:   
-                            printf_unsigned(va_arg(args, unsigned  long long), radix);
-                            break;
+                        case PRINTF_LENGTH_LONG_LONG:   printf_unsigned(va_arg(args, unsigned  long long), radix);
+                                                        break;
                         }
                     }
                 }

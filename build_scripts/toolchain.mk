@@ -8,7 +8,7 @@ BINUTILS_SRC = toolchain/binutils-$(BINUTILS_VERSION)
 export PATH :=$(TOOLCHAIN_PREFIX)/bin:$(PATH)
 
 toolchain_binutils:
-	mkdir toolchain
+	mkdir -p toolchain
 	cd toolchain && wget $(BINUTILS_URL)
 	cd toolchain && tar -xf binutils-$(BINUTILS_VERSION).tar.gz
 	mkdir -p toolchain/binutils-built-$(BINUTILS_VERSION)
@@ -31,7 +31,7 @@ GCC_BUILD = toolchain/gcc-build-$(GCC_VERSION)
 toolchain_gcc: toolchain_binutils
 	cd toolchain && wget $(GCC_URL)
 	cd toolchain && tar -xf gcc-$(GCC_VERSION).tar.gz
-	mkdir $(GCC_BUILD)
+	mkdir -p $(GCC_BUILD)
 	cd $(GCC_BUILD) && ../gcc-$(GCC_VERSION)/configure \
 		--prefix="$(TOOLCHAIN_PREFIX)"	\
 		--target=$(TARGET)				\

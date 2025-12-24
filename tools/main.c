@@ -24,7 +24,7 @@ int main(int argc, const char** argv)
     }
 
     // browse files in root
-    FAT_File  fd = FAT_Open(&disk, argv[2]);
+    FAT_File far* fd = FAT_Open(&disk, argv[2]);
 
     if (fd->IsDirectory)
     {
@@ -41,12 +41,12 @@ int main(int argc, const char** argv)
     else
     {
         uint32_t read = 0;
-        char buffer[512];
+        char buffer[100];
         while ((read = FAT_Read(&disk, fd, sizeof(buffer), buffer)))
         {
-            for (uint32_t i = 0; i < read; i++)
-                putc(buffer[i], stdout);
-            fflush(stdout);
+            // for (uint32_t i = 0; i < read; i++)
+            //     putc(buffer[i], stdout);
+            // fflush(stdout);
         }
     }
     

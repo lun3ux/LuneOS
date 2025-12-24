@@ -31,8 +31,8 @@ LuneOS is an educational, experimental kernel designed to explore **low-level x8
 | **Disk Reading** | Basic disk sector read routines for future filesystem support. | ✅ Complete |
 | **C Integration** | Stage2 can execute C code compiled with Watcom for prototyping kernel features. | ✅ Complete |
 | **FAT12 Filesystem** | Stage 2 is able to read from FAT12 files for future compatability with other projects. | ✅ Complete |  
-| **Bootloader Stage 1 & 2** | Transition from 16-bit Real Mode to 32-bit Protected Mode. | ⚙️ Planned |
-| **Switch Cross Compliler** | Switching from WatcomC to GCC for accsess to more libraries. | ⚙️ Planned |
+| **Bootloader Stage 1 & 2** | Transition from 16-bit Real Mode to 32-bit Protected Mode. | ✅ Complete |
+| **Switch Cross Compliler** | Switching from WatcomC to GCC for accsess to more libraries. | ✅ Complete |
 
 
 ---

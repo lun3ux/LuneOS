@@ -1,21 +1,23 @@
 bits 16
+
 section .entry
 
 extern __bss_start
 extern __end
-extern start
-global _start
 
-_start:
+extern start
+global entry
+
+entry:
     cli
+
     ; save boot drive
     mov [g_BootDrive], dl
-
 
     ; setup stack
     mov ax, ds
     mov ss, ax
-    mov sp, 0
+    mov sp, 0xFFF0
     mov bp, sp
 
     ; switch to protected mode
@@ -30,21 +32,6 @@ _start:
     ; 5 - far jump into protected mode
     jmp dword 08h:.pmode
 
-
-    ; switch to protected mode
-    cli                     ; 1 - Disable interrupts
-    call EnableA20          ; 2 - Enable A20 gate
-    call LoadGDT            ; 3 - Load GDT
-
-    ; 4 - set protection enable flag in CR0
-    mov eax, cr0
-    or al, 1
-    mov cr0, eax
-
-    ; 5 - far jump into protected mode
-    jmp dword 08h:.pmode
-
-
 .pmode:
     ; we are now in protected mode!
     [bits 32]
@@ -53,9 +40,8 @@ _start:
     mov ax, 0x10
     mov ds, ax
     mov ss, ax
-
-    ; empty bss (uninitalized data :3)
-
+   
+    ; clear bss (uninitialized data)
     mov edi, __bss_start
     mov ecx, __end
     sub ecx, edi
@@ -63,16 +49,15 @@ _start:
     cld
     rep stosb
 
-
-        ; expect boot drive in dl, send it as argument to cstart function
+    ; expect boot drive in dl, send it as argument to cstart function
     xor edx, edx
-    mov dl,[g_BootDrive]
+    mov dl, [g_BootDrive]
     push edx
+    call start
 
-   call start
-    
     cli
     hlt
+
 
 EnableA20:
     [bits 16]
