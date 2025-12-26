@@ -5,14 +5,18 @@
             "includePath": [
                 "${workspaceFolder}/**"
             ],
-            "defines": [],
+            "defines": [
+                "__GNUC__"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "intelliSenseMode": "linux-clang-x64",
+            "intelliSenseMode": "linux-gcc-x86",
             "configurationProvider": "ms-vscode.makefile-tools",
             "compilerArgs": [
-                "-ffreestanding -c"
+                "-ffreestanding",
+                "-c",
+                "-c11"
             ]
         },
         {
